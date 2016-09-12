@@ -2,6 +2,7 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var crypto = require('crypto');
+var moment = require('moment');
 // 引入mongoose
 var mongoose = require('mongoose');
 // 引入连接
@@ -15,13 +16,13 @@ var Note = models.Note;
 // 引入检测登录文件
 var checkLogin = require('./checkLogin.js');
 
+//生成一个express实例
+var app = express();
+
 // 使用mongoose连接服务
 mongoose.connect('mongodb://localhost:27017/notes');
 mongoose.connection.on('error', console.error.bind(console, '连接数据库失败'));
 
-
-//生成一个express实例
-var app = express();
 
 // 建立 session 模型
 app.use(session({
@@ -51,7 +52,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // 响应首页get请求
 app.get('/', checkLogin.noLogin);
 app.get('/', function(req, res) {
-    Note.findOne({author: req.session.user.username})
+    Note.find({author: req.session.user.username})
         .exec(function(err, arts) {
             if (err) {
                 console.log(err);
@@ -208,5 +209,6 @@ app.get('/detail/:_id', function(req, res) {
 
 // 端口监听
 app.listen(3000, function(req, res) {
+    console.log(app.get('views'));
     console.log('app is running at port 3000');
 })
