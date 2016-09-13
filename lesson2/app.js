@@ -28,7 +28,7 @@ mongoose.connection.on('error', console.error.bind(console, '连接数据库失�
 app.use(session({
     key: 'session',
     secret: 'Keboard cat',
-    cookie: {maxAge: 1000 * 60 * 60 * 24}, // 设置session的保存时间为1天
+    cookie: {maxAge: 1000 * 60 * 60 * 1}, // 设置session的保存时间为1小时
     // 连接mongoDB数据库必要设置
     store: new MongoStore({
         db: 'notes',
@@ -67,7 +67,7 @@ app.get('/', function(req, res) {
         })
 });
 
-app.get('/', checkLogin.login);
+// app.get('/', checkLogin.login);
 app.get('/reg', function(req, res) {
     res.render('register', {
         title: '注册',
@@ -119,7 +119,7 @@ app.post('/reg', function(req, res) {
     });
 });
 
-app.get('/', checkLogin.login);
+// app.get('/', checkLogin.login);
 app.get('/login', function(req, res) {
     res.render('login', {
         title: '登录',
@@ -156,13 +156,14 @@ app.post('/login', function(req, res) {
         return res.redirect('/');
     });
 });
-app.get('/', checkLogin.noLogin);
+// app.get('/', checkLogin.noLogin);
 app.get('/quit', function(req, res) {
-    console.log(' quit success');
+    req.session.user = null;
+    console.log('quit success');
     return res.redirect('/login');
 })
 
-app.get('/', checkLogin.noLogin);
+// app.get('/', checkLogin.noLogin);
 app.get('/post', function(req, res) {
     res.render('post', {
         title: '发布',
@@ -188,7 +189,7 @@ app.post('/post', function(req, res) {
     })
 });
 
-app.get('/', checkLogin.noLogin);
+// app.get('/', checkLogin.noLogin);
 app.get('/detail/:_id', function(req, res) {
     Note.findOne({_id: req.params._id})
         .exec(function(err, art) {
